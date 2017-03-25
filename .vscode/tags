@@ -1,0 +1,27 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BeautifulSoup	../test_script.py	/^from bs4 import BeautifulSoup$/;"	kind:namespace	line:3
+cur	../test_script.py	/^cur = conn.cursor()$/;"	kind:variable	line:21
+end	../getOrgName.py	/^end = 2016211500$/;"	kind:variable	line:6
+first	../test_script.py	/^first = 20132100001$/;"	kind:variable	line:25
+function.py	../function.py	1;"	kind:file	line:1
+getOrgName.py	../getOrgName.py	1;"	kind:file	line:1
+getResponse	../getOrgName.py	/^def getResponse(url):$/;"	kind:function	line:7
+getResponse	../test_script.py	/^def getResponse(url):$/;"	kind:function	line:7
+json	../getOrgName.py	/^import json$/;"	kind:namespace	line:4
+json	../test_script.py	/^import json$/;"	kind:namespace	line:5
+last	../test_script.py	/^last = 2013214857$/;"	kind:variable	line:26
+orgNames	../getOrgName.py	/^orgNames = set()$/;"	kind:variable	line:17
+pymysql	../test_script.py	/^import pymysql$/;"	kind:namespace	line:6
+response	../getOrgName.py	/^    response = getResponse(url)$/;"	kind:variable	line:20
+response	../test_script.py	/^    response = getResponse(url)$/;"	kind:variable	line:29
+responseJson	../getOrgName.py	/^    responseJson = json.loads(response)$/;"	kind:variable	line:21
+responseJson	../test_script.py	/^    responseJson = json.loads(response)$/;"	kind:variable	line:30
+start	../getOrgName.py	/^start = 2016211081$/;"	kind:variable	line:5
+test_script.py	../test_script.py	1;"	kind:file	line:1
+urlopen	../getOrgName.py	/^from urllib.request import urlopen$/;"	kind:namespace	line:3
+urlopen	../test_script.py	/^from urllib.request import urlopen$/;"	kind:namespace	line:2
