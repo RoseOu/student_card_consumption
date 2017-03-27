@@ -5,22 +5,25 @@
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
 BeautifulSoup	../test_script.py	/^from bs4 import BeautifulSoup$/;"	kind:namespace	line:3
-cur	../test_script.py	/^cur = conn.cursor()$/;"	kind:variable	line:21
+conn	../test_script.py	/^conn = pymysql.connect(host='127.0.0.1', unix_socket='\/tmp\/mysql.sock',$/;"	kind:variable	line:20
+cur	../test_script.py	/^cur = conn.cursor()$/;"	kind:variable	line:23
+datetime	../test_script.py	/^import datetime$/;"	kind:namespace	line:7
 end	../getOrgName.py	/^end = 2016211500$/;"	kind:variable	line:6
-first	../test_script.py	/^first = 20132100001$/;"	kind:variable	line:25
+first	../test_script.py	/^first = 20132100001$/;"	kind:variable	line:46
 function.py	../function.py	1;"	kind:file	line:1
 getOrgName.py	../getOrgName.py	1;"	kind:file	line:1
 getResponse	../getOrgName.py	/^def getResponse(url):$/;"	kind:function	line:7
-getResponse	../test_script.py	/^def getResponse(url):$/;"	kind:function	line:7
+getResponse	../test_script.py	/^def getResponse(url):$/;"	kind:function	line:8
+insertInfoIntoDB	../test_script.py	/^def insertInfoIntoDB(each_info, userId):$/;"	kind:function	line:27
 json	../getOrgName.py	/^import json$/;"	kind:namespace	line:4
 json	../test_script.py	/^import json$/;"	kind:namespace	line:5
-last	../test_script.py	/^last = 2013214857$/;"	kind:variable	line:26
+last	../test_script.py	/^last = 2013214857$/;"	kind:variable	line:47
 orgNames	../getOrgName.py	/^orgNames = set()$/;"	kind:variable	line:17
 pymysql	../test_script.py	/^import pymysql$/;"	kind:namespace	line:6
+re	../test_script.py	/^import re$/;"	kind:namespace	line:4
 response	../getOrgName.py	/^    response = getResponse(url)$/;"	kind:variable	line:20
-response	../test_script.py	/^    response = getResponse(url)$/;"	kind:variable	line:29
 responseJson	../getOrgName.py	/^    responseJson = json.loads(response)$/;"	kind:variable	line:21
-responseJson	../test_script.py	/^    responseJson = json.loads(response)$/;"	kind:variable	line:30
+shopList	../test_script.py	/^shopList = ['\/华中师范大学\/后勤集团\/商贸中心\/超市\/学子超市', '\/华中师范大学\/校内经营商户\/爱心超市', '\/华中师范大学\/结账商户\/可美克滋', $/;"	kind:variable	line:49
 start	../getOrgName.py	/^start = 2016211081$/;"	kind:variable	line:5
 test_script.py	../test_script.py	1;"	kind:file	line:1
 urlopen	../getOrgName.py	/^from urllib.request import urlopen$/;"	kind:namespace	line:3
