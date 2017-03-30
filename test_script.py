@@ -47,7 +47,7 @@ first = 20132100001
 last = 2013214857
 
 shopList = ['/华中师范大学/后勤集团/商贸中心/超市/学子超市', '/华中师范大学/校内经营商户/爱心超市', '/华中师范大学/结账商户/可美克滋', 
-            '/华中师范大学/后勤集团/商贸中心/超市/满江红超市', '/华中师范大学/校内经营商户/阳光咖啡',]
+            '/华中师范大学/后勤集团/商贸中心/超市/满江红超市', '/华中师范大学/校内经营商户/阳光咖啡']
 for student_id in xrange(first, last):
     url = "http://console.ccnu.edu.cn/ecard/getTrans?userId="+str(student_id)+"&days=365&startNum=0&num=10000"
     response = getResponse(url)
