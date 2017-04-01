@@ -24,7 +24,7 @@ from flask_script import Manager, Shell
 from flask import Flask
 from flask_migrate import migrate, MigrateCommand    #什么是MigrateCommand
 from student_card_consumption import db, app
-from student_card_consumption.models import Student_card_consumption_table1, Student_card_consumption_table2
+from student_card_consumption.models import Student_card_consumption_table
 from datetime import datetime
 
 
@@ -36,32 +36,32 @@ sys.setdefaultencoding('utf-8')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
-#开始的时候用Student_card_consumption_table1
-current_table = Student_card_consumption_table1
 
-reference_timestamp = datetime(2017, 1, 1)
-def switch_database_table(table1, table2, current_table):
+
+#reference_timestamp = datetime(2017, 1, 1)
+#def switch_database_table(table1, table2, Student_card_consumption):
     #current_timestamp = datetime.utcnow() + timedelta(hours=8)
     #diff = current_timestamp - reference_timestamp
     #diff_days = diff.days
     #if diff % 3:
-    if current_table == table1:
-        current_table.query.delete()
-        current_table = table2
-        current_table.insert_all_consumption_data()
-    else:
-        current_table.query.delete()
-        current_table = table1
-        current_table.insert_all_consumption_data()
-    db.session.commit()
-    return current_table 
+#    if Student_card_consumption == table1:
+#        Student_card_consumption.query.delete()
+#        Student_card_consumption = table2
+#        Student_card_consumption.insert_all_consumption_data()
+#    else:
+#        Student_card_consumption.query.delete()
+#        Student_card_consumption = table1
+#        Student_card_consumption.insert_all_consumption_data()
+#    db.session.commit()
+#    return Student_card_consumption 
 
 #????不知道放在哪里
-current_timestamp = datetime.utcnow() + timedelta(hours=8)
-diff = current_timestamp = reference_timestamp
-diff_days = diff.days
-if (diff_days // 2) % 2 == 0:   #每4天切换一次数据库
-    switch_database_table(Student_card_consumption_table1, Student_card_consumption_table2, current_table)
+#current_timestamp = datetime.utcnow() + timedelta(hours=8)
+#diff = current_timestamp = reference_timestamp
+#diff_days = diff.days
+#if (diff_days // 2) % 2 == 0:   #每4天切换一次数据库
+#    switch_database_table(Student_card_consumption_table1, Student_card_consumption_table2, Student_card_consumption)
+
 
 def make_shell_context():
     shell_ctx = dict(app = app, db = db, Student_card_consumption=Student_card_consumption)
@@ -87,9 +87,3 @@ if __name__ == "__main__":
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
         os.environ['STDCC_CONFIG'] = 'test'
     manager.run()
-    #????不知道放在哪里
-    current_timestamp = datetime.utcnow() + timedelta(hours=8)
-    diff = current_timestamp = reference_timestamp
-    diff_days = diff.days
-    if (diff_days // 2) % 2 == 0:   #每4天切换一次数据库
-        switch_database_table(Student_card_consumption_table1, Student_card_consumption_table2, current_table)

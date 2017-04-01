@@ -15,7 +15,6 @@ import base64
 from urllib import urlopen
 from datetime import datetime, timedelta
 #from pytz import timezone
-from ..manage import current_table
 import json
 
 #各个年级的xrange
@@ -25,6 +24,7 @@ xrange_2015 = xrange(2014210001, 2014214840),
 xrange_2016 = xrange(2016210001, 2016214642)
 xrange_list = [xrange_2013, xrange_2014, xrange_2015, xrange_2016]
 
+#除了食堂外的全部
 shopList = [
 '/华中师范大学/后勤集团/商贸中心/超市/学子超市',
 '/华中师范大学/校内经营商户/爱心超市', 
@@ -33,13 +33,29 @@ shopList = [
 '/华中师范大学/校内经营商户/阳光咖啡'
 ]
 
+#专门指特定的几个超市
+ShopList = [
+'/华中师范大学/后勤集团/商贸中心/超市/学子超市',
+'/华中师范大学/校内经营商户/爱心超市', 
+'/华中师范大学/后勤集团/商贸中心/超市/满江红超市', 
+]
+
 #获取字典中最大的值
-def getTheBiggestKey(a_dict):
+def getTheLargestKeyStr(a_dict):
     temp = 0
     for key in a_dict:
         if a_dict[key] > temp:
             biggestKey = key
+            temp = a_dict[key]
     return biggestKey
+
+def getTheLeastKeyStr(a_dict):
+    temp = 99999999
+    for key in a_dict:
+        if a_dict[key] < temp:
+            smallestKey = key
+            temp = a_dict[key]
+    return smallestKey
 
 def transSToTS(Timestamp_str):
     Timestamp = datetime(int(Timestamp_str[:4]),
@@ -76,7 +92,8 @@ def getRain(MorningList, NoonList, EveningList):
         return "lunchrain"
     else:
         return "dinnerain"
-class Student_card_consumption_table1(db.Model):
+
+class Student_card_consumption_table(db.Model):
     """
         Student_card_consumption_table1: 学生卡消费信息
 
@@ -89,10 +106,9 @@ class Student_card_consumption_table1(db.Model):
         :var transMoney: 交易的金额
 
         :func insert_all_consumption_data
-        :func refresh_all_consumption_data        把新的数据添加到数据库中,删除旧的数据(一年以前的)
     """
     __table_args__ = {'mysql_charset': 'utf8'}
-    __tablename__ = "stdcc_table1"
+    __tablename__ = "stdcc_table"
     id = db.Column(db.Integer, primery_key=True)
     userId = db.Column(db.Integer)
     orgName = db.Column(db.String(50))
@@ -107,8 +123,11 @@ class Student_card_consumption_table1(db.Model):
     def insert_all_consumption_data():
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
+                    current_timestamp = datetime.utcnow() + timedelta(hours=8)
+                    diff_days = (current_timestamp - datetime(2016,9,1)).days
+                    
                     url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
-                    + str(student_id) + '&days=365&startNum=0&num=10000'
+                    + str(student_id) + '&days=' + str(diff_days) + '&startNum=0&num=10000'       
                     response = getResponse(url)
                     responseJson = json.loads(response)
                     try:
@@ -121,6 +140,7 @@ class Student_card_consumption_table1(db.Model):
                                 User.insert_consumption_data(each_info, student_id)
                     except TypeError as e:
                         continue
+
     @staticmethod
     def insert_consumption_data(each_info, userId):     #userId为int型
         Timestamp_str = each_info['dealDateTime']
@@ -166,60 +186,61 @@ class Student_card_consumption_table1(db.Model):
         return "<Student_card_consumption %r>" % self.id     #???
 
 
-class Student_card_consumption_table2(db.Model):
-    """
-        Student_card_consumption_table1的拷贝: 学生卡消费信息
-    """
-    __table_args__ = {'mysql_charset': 'utf8'}
-    __tablename__ = "stdcc_table2"
-    id = db.Column(db.Integer, primery_key=True)
-    userId = db.Column(db.Integer)
-    orgName = db.Column(db.String(50))
-    userName = db.Column(db.String(20))
-    dealDateTimestamp = db.Column(db.DateTime, index=True)
-    dealDate = db.Column(db.String(20))
-    dealTime = db.Column(db.String(20))
-    transMoney = db.Column(db.Float)
-
-    #插入消费数据
-    @staticmethod
-    def insert_all_consumption_data():
-        for grade_xrange in xrange_list:
-            for student_id in grade_xrange:
-                    url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
-                    + str(student_id) + '&days=365&startNum=0&num=10000'
-                    response = getResponse(url)
-                    responseJson = json.loads(response)
-                    try:
-                        for each_info in responseJson:
-                            if (each_info['orgName'][:17] == '华中师范大学/后勤集团/饮食中心') or \
-                            each_info['orgName'] == '/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅':
+#class Student_card_consumption_table2(db.Model):
+#    """
+#        Student_card_consumption_table1的拷贝: 学生卡消费信息
+#    """
+#    __table_args__ = {'mysql_charset': 'utf8'}
+#    __tablename__ = "stdcc_table2"
+#    id = db.Column(db.Integer, primery_key=True)
+#    userId = db.Column(db.Integer)
+#    orgName = db.Column(db.String(50))
+#    userName = db.Column(db.String(20))
+#    dealDateTimestamp = db.Column(db.DateTime, index=True)
+#    dealDate = db.Column(db.String(20))
+#    dealTime = db.Column(db.String(20))
+#    transMoney = db.Column(db.Float)
+#
+#    #插入消费数据
+#    @staticmethod
+#    def insert_all_consumption_data():
+#        for grade_xrange in xrange_list:
+#            for student_id in grade_xrange:
+#                    url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
+#                    + str(student_id) + '&days=365&startNum=0&num=10000'
+#                    response = getResponse(url)
+#                    responseJson = json.loads(response)
+#                    try:
+#                        for each_info in responseJson:
+#                            if (each_info['orgName'][:17] == '华中师范大学/后勤集团/饮食中心') or \
+#                            each_info['orgName'] == '/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅':
                                 #把数据插入数据库
-                                User.insert_consumption_data(each_info, student_id)
-                            elif each_info['orgName'] in shopList:
-                                User.insert_consumption_data(each_info, student_id)
-                    except TypeError as e:
-                        continue
+#                                User.insert_consumption_data(each_info, student_id)
+#                            elif each_info['orgName'] in shopList:
+#                                User.insert_consumption_data(each_info, student_id)
+#                    except TypeError as e:
+#                        continue
+#
+#    @staticmethod
+#    def insert_consumption_data(each_info, userId):     #userId为int型
+#        Timestamp_str = each_info['dealDateTime']
+#        data = Student_card_consumption_table2(userId = userId,
+#                                        orgName = each_info['orgName'],
+#                                        dealDateTimestamp = datetime(int(Timestamp_str[:4]),
+#                                                                     int(Timestamp_str[5:7]),
+#                                                                     int(Timestamp_str[8:10]),
+#                                                                     int(Timestamp_str[11:13]),
+#                                                                     int(Timestamp_str[14:16]),
+#                                                                     int(Timestamp_str[17:])
+#                                                                     ),
+#                                        userName = each_info['userName'],
+#                                        dealDate = Timestamp_str[:10],
+#                                        dealTime = Timestamp_str[11:],
+#                                        transMoney = float(each_info['transMoney'])
+#                                        )
+#        db.session.add(data)
+#        db.session.commit()
 
-    @staticmethod
-    def insert_consumption_data(each_info, userId):     #userId为int型
-        Timestamp_str = each_info['dealDateTime']
-        data = Student_card_consumption_table2(userId = userId,
-                                        orgName = each_info['orgName'],
-                                        dealDateTimestamp = datetime(int(Timestamp_str[:4]),
-                                                                     int(Timestamp_str[5:7]),
-                                                                     int(Timestamp_str[8:10]),
-                                                                     int(Timestamp_str[11:13]),
-                                                                     int(Timestamp_str[14:16]),
-                                                                     int(Timestamp_str[17:])
-                                                                     ),
-                                        userName = each_info['userName'],
-                                        dealDate = Timestamp_str[:10],
-                                        dealTime = Timestamp_str[11:],
-                                        transMoney = float(each_info['transMoney'])
-                                        )
-        db.session.add(data)
-        db.session.commit()
 
 class Page2_data(db.Model):
     """
@@ -235,6 +256,8 @@ class Page2_data(db.Model):
         你在食堂共消费XX元，早（中晚）餐消费最高，你可能是晨（午、夜）食主义者   
         ...................... 
     """
+    __tablename__ = 'page2_data'
+    __table_args__ = {'mysql_charset':'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, unique=True, index=True)
     Page2Timestamp = db.Column(db.DateTime)       #X月X日
@@ -250,7 +273,9 @@ class Page2_data(db.Model):
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
                 #获取最大学生单次消费的记录
-                list1 = current_table.query.filter_by(userId=student_id).order_by(current_table.transMoney).all()
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.transMoney).all()
+                if not list1:
+                    break
                 list2 = []
                 dict1 = dict() #用于比较此学生在各个餐厅的刷卡数量
                 for i in list1:
@@ -263,7 +288,7 @@ class Page2_data(db.Model):
                         dict1[i.orgName] = dict1[i.orgName] + 1
                     else:
                         dict1.setdefault(i.orgName, default=1)
-                P2favOrgName = getTheBiggestKey(dict1)
+                P2favOrgName = getTheLargestKeyStr(dict1)
                 P2favOrgNameCount = dict1[P2favOrgName]
                 P2favOrgNameTotalTransMoney = 0
                 for i in list2:
@@ -304,7 +329,7 @@ class Page2_data(db.Model):
     def refresh_all_Page2_data():
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
-                list1 = current_table.query.filter_by(userId=student_id).order_by(current_table.transMoney).all()
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.transMoney).all()
                 list2 = []
                 dict1 = dict() #用于比较此学生在各个餐厅的刷卡数量
                 for i in list1:
@@ -326,7 +351,7 @@ class Page2_data(db.Model):
                          dict1[i.orgName] = dict1[i.orgName] + 1
                      else:
                          dict1.setdefault(i.orgName, default=1)
-                 P2favOrgName = getTheBiggestKey(dict1)
+                 P2favOrgName = getTheLargestKeyStr(dict1)
                  P2favOrgNameCount = dict1[P2favOrgName]
                  P2favOrgNameTotalTransMoney = 0
                  for i in list2:
@@ -380,13 +405,85 @@ class Page3_data(db.Model):
         共计在超市刷卡XX次
         累计消费XX元（若数据缺失则在那位用户的界面中不显示此页面）
     """    
+    __tablename__ = 'page3_data'
+    __table_args__ = {'mysql_charset':'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, unique=True, index=True)
     Page3Timestamp = db.Column(db.DateTime)
-    Page3maxTransMoney = db.Column(db.Float)
-    Page3totalShopingCount = db.Column(db.Integer)
-    Page3
-    Page3 
+    Page3totalTransMoney = db.Column(db.Float)
+    Page3totalShoppingCount = db.Column(db.Integer)
+    Page3totalShoppingConsumed = db.Column(db.Float)
+
+    @staticmethod
+    def insert_all_Page3_data():
+        for xrange_grade in xrange_list:
+            for student_id in xrange_grade:
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.DateTime).all()
+                list2 = []   #当前学生的所有超市数据
+                for i in list1:
+                    if i.orgName in shopList:
+                        list2.append(i)
+                highestShopTransMoney = float(list2[0].transMoney)
+                HSTM_sqlalchemyobj = list2[0]
+                for i in list2:
+                    if i.transMoney >= HSTM_sqlalchemyobj.transMoney:
+                        HSTM_sqlalchemyobj = i
+                P3Timestamp = HSTM_sqlalchemyobj.dealDateTimestamp
+                P3totalTransMoney = float(HSTM_sqlalchemyobj.transMoney)
+                P3totalShoppingCount = len(list2)
+                total = 0.0
+                for i in list2:
+                    total = total + float(i.transMoney)
+                P3totalShoppingConsumed = total
+                u = Page3_data(userId = student_id,
+                               Page3Timestamp = P3Timestamp,
+                               Page3totalTransMoney = P3totalTransMoney,
+                               Page3totalShoppingCount = P3totalShoppingCount,
+                               Page3totalShoppingConsumed = P3totalShoppingConsumed)
+                db.session.add(u)
+                db.session.commit()
+
+    @staticmethod
+    def refresh_all_Page3_data():
+        for xrange_grade in xrange_list:
+            for student_id in xrange_grade:
+                #先把已存在的数据删除
+                a = Page3_data.query.filter_by(userId=student_id).first()
+                db.session.delete(a)
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.DateTime).all()
+                list2 = []   #当前学生的所有超市数据
+                for i in list1:
+                    if i.orgName in shopList:
+                        list2.append(i)
+                highestShopTransMoney = float(list2[0].transMoney)
+                HSTM_sqlalchemyobj = list2[0]
+                for i in list2:
+                    if i.transMoney >= HSTM_sqlalchemyobj.transMoney:
+                        HSTM_sqlalchemyobj = i
+                P3Timestamp = HSTM_sqlalchemyobj.dealDateTimestamp
+                P3totalTransMoney = float(HSTM_sqlalchemyobj.transMoney)
+                P3totalShoppingCount = len(list2)
+                total = 0.0
+                for i in list2:
+                    total = total + float(i.transMoney)
+                P3totalShoppingConsumed = total
+                u = Page3_data(userId = student_id,
+                               Page3Timestamp = P3Timestamp,
+                               Page3totalTransMoney = P3totalTransMoney,
+                               Page3totalShoppingCount = P3totalShoppingCount,
+                               Page3totalShoppingConsumed = P3totalShoppingConsumed)
+                db.session.add(u)
+                db.session.commit()
+            
+        def to_json(self):
+            json_Page3 = {
+                'userId' = self.userId,
+                'Page3Timestamp' = str(self.Page3Timestamp)[:19],
+                'Page3totalTransMoney' = self.Page3totalTransMoney,
+                'Page3totalShoppingCount' = self.Page3totalShoppingCount,
+                'Page3totalShoppingConsumed' = self.Page3totalShoppingConsumed
+            }
+    
 
 class Page4_data(db.Model):
     """
@@ -395,20 +492,119 @@ class Page4_data(db.Model):
         竟是最低月份的X倍
     """
     id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer, unique=True)
+    Page4RichMonthConsum = db.Column(db.Float)
+    Page4PoorMonthConsum = db.Column(db.Float)
+    Page4RichMonth = db.Column(db.Integer)
+    Page4PoorMonth = db.Column(db.Integer)
 
+    @staticmethod
+    def insert_all_Page4_data():
+        for xrange_grade in xrangeList:
+            for student_id in xrange_grade:
+                list1 = Student_card_consumption.query.filter_by(userId=sudent_id).all()
+                if not list1:   #如果是空列表则
+                    break
+                a_dict = dict()
+                a_dict['Jan_total'] = [0,1]    #列表中的第一个数值代表月支出，第二个数值是当前月份的数值化
+                a_dict['Feb_total'] = [0,2]
+                a_dict['Mar_total'] = [0,3]
+                a_dict['Apr_total'] = [0,4]
+                a_dict['Sep_total_ly'] = [0,9]      #ly == last year
+                a_dict['Oct_total_ly'] = [0,10]
+                a_dict['Nov_total_ly'] = [0,11]
+                a_dict['Dec_total_ly'] = [0,12]
+                for i in list1:
+                    month = int(str(i.dealDateTimestamp)[6:8])
+                    if   month == 1:
+                        a_dict['Jan_total'][0] = a_dict['Jan_total'][0] + float(i.transMoney)
+                    elif month == 2:
+                        a_dict['Feb_total'][0] = a_dict['Feb_total'][0] + float(i.transMoney)
+                    elif month == 3:
+                        a_dict['Mar_total'][0] = a_dict['Mar_total'][0] + float(i.transMoney)
+                    elif month == 4:
+                        a_dict['Apr_total'][0] = a_dict['Apr_total'][0] + float(i.transMoney)
+                    elif month == 9:
+                        a_dict['Sep_total_ly'][0] = a_dict['Seb_total'][0] + float(i.transMoney)
+                    elif month == 10:
+                        a_dict['Oct_total_ly'][0] = a_dict['Oct_total'][0] + float(i.transMoney)
+                    elif month == 11:
+                        a_dict['Nov_total_ly'][0] = a_dict['Nov_total'][0] + float(i.transMoney)
+                    elif month == 12:
+                        a_dict['Dec_total_ly'][0] = a_dict['Dec_total'][0] + float(i.transMoney)
+                #找出12个变量中最大的那个
+                #找出12个变量中最小的那个
+                maxkey = getTheLargestKeyStr(a_dict)
+                minkey = getTheLeastKeyStr(a_dict)
+    
+                P4RichMonth = a_dict['maxkey'][1]#最大的那个变量名
+                P4PoorMonth = a_dict['minkey'][1]#最小的那个变量名
+                P4RichMonthConsum = a_dict[maxkey][0]
+                P4PoorMonthConsum = a_dict[minkey][0]
+                
+                u = Page4_data(userId = student_id,
+                               Page4RichMonthConsum = P4RichMonth,
+                               Page4PoorMonthConsum = P4PoorMonth,
+                               Page4RichMonth = P4PoorMonth,
+                               Page4PoorMonth = P4PoorMonth)
+                db.session.add(u)
+                db.session.commit()
+    
+    def to_json(self):
+        return Page4_data_json = {
+            'userId': self.userId,
+            'Page4RichMonthConsum': self.Page4RichMonthConsum,
+            'Page4PoorMonthConsum': self.Page4PoorMonthConsum,
+            'Page4PoorMonth': self.Page4PoorMonth,
+            'Page4RichMonth': self.Page4RichMonth
+        }
 
 class Page5_data(db.Model):
     """
         你在近一年XX天（日期从上学期开始到现在）内共消费了XXX元
         超过了全校XX%的人 全校排名XXX
-        可以有一个饼图分别给出超市、食堂、其他分别消费占的比例（直接在饼图各部分加上他所占的百分比，旁边列出饼图不同颜色分别代表超市食堂其他 ）
+        可以有一个饼图分别给出超市、食堂、其他分别消费占的比例
+       （直接在饼图各部分加上他所占的百分比，旁边列出饼图不同颜色分别代表超市食堂其他）
     """
-    
+
+    id = db.Column(db.Integer, primary_key=True)
+    userId = db.Column(db.Integer, unique=True)
+    Page5totalTransMoney = db.Column(db.Float)
+    Page5totalRefectoryTransMoney = db.Column(db.Float)
+    Page5totalShopTransMoney = db.Column(db.Float)
+
+    @staticmethod
+    def insert_all_page5_data():
+        for grade_xrange in xrange_list:
+            for student_id in grade_xrange:
+                list1 = Student_card_consumption_table.query.filter_by(userId=student_id).all()
+                if not list1:
+                    break
+                totalTransMoney = 0.0
+                for i in list1:
+                    totalTransMoney = totalTransMoney + float(i.transMoney)
+                totalRefectoryTransMoney = 0.0
+                for i in list1:
+                    if (i.orgName[:17] == '/华中师范大学/后勤集团/饮食中心') or (i.orgName == "/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
+                       totalRefectoryTransMoney = totalRefectoryTransMoney + float(i.transMoney)
+                
+                totalShopTransMoney = 0.0
+                for i in list1:
+                    if i.orgName in ShopList:
+                        totalShopTransMoney = totalShopTransMoney + float(i.transMoney)
+
+                u = Page5_data(
+                    userId = student_id,
+                    Page5totalTransMoney = totalTransMoney,
+                    Page5totalRefectoryTransMoney = totalRefectoryTransMoney,
+                    Page5totalShopTransMoney = totalShopTransMoney
+                )
+                db.session.add(u)
+                db.session.commit()
 
 
 class Public_data(db.Model):
     """
-        弹出图片图片内容
         1.华师包子哪家强
         XX食堂XX窗口：日营业额：XXX 刷卡数目：XXX
         （ 排名前三的窗口）
@@ -436,3 +632,11 @@ class Public_data(db.Model):
         XXX食堂XX窗口：刷卡数量XXX日营业额XXX
         XXX食堂XX窗口：刷卡数量XXX日营业额XXX
     """
+    __tablename__ = 'public_data'
+    __table_args__ = {'mysql_charset':'utf8'}
+    id = db.Column(db)
+
+
+    @staticmethod
+    def insert_all_Public_data:
+
