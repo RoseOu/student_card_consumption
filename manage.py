@@ -24,7 +24,8 @@ from flask_script import Manager, Shell
 from flask import Flask
 from flask_migrate import migrate, MigrateCommand    #什么是MigrateCommand
 from student_card_consumption import db, app
-from student_card_consumption.models import Student_card_consumption_table
+from student_card_consumption.models import Student_card_consumption_table, Page2_data, Page3_data, Page4_data, Page5_data
+                                            
 from datetime import datetime
 
 
@@ -74,15 +75,17 @@ def test(coverage=False):
     #测试用，以后来写
     pass
 
-#没1或3天更新一次student_card_consumption_table数据库表
+#One command reload all data
 @manager.command
-def update_STDCC_db(arg):
-    from datetime import datetime
-    CurrentLocalTime = datetime.utcnow()
-    Student_card_consumption_table1.insert_all_consumption_data()
+def insert_all_data():
+    Student_card_consumption_table.insert_all_consumption_data()
+    Page2_data.insert_all_Page2_data()
+    Page3_data.insert_all_Page3_data()
+    Page4_data.insert_all_Page4_data()
+    Page5_data.insert_all_page5_data()
+    Page5_data.insertAllRanking()
     
-
-
+    
 if __name__ == "__main__":
     if sys.argv[1] == 'test' or sys.argv[1] == 'lint':
         os.environ['STDCC_CONFIG'] = 'test'

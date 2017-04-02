@@ -16,6 +16,9 @@ from urllib import urlopen
 from datetime import datetime, timedelta
 #from pytz import timezone
 import json
+import os
+
+totalStudentAmount = 4857 + 4840 + 4840 + 4642
 
 #各个年级的xrange
 xrange_2013 = xrange(2013210001, 2013214857),
@@ -273,7 +276,7 @@ class Page2_data(db.Model):
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
                 #获取最大学生单次消费的记录
-                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.transMoney).all()
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.transMoney).all()
                 if not list1:
                     break
                 list2 = []
@@ -329,7 +332,7 @@ class Page2_data(db.Model):
     def refresh_all_Page2_data():
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
-                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.transMoney).all()
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.transMoney).all()
                 list2 = []
                 dict1 = dict() #用于比较此学生在各个餐厅的刷卡数量
                 for i in list1:
@@ -418,7 +421,9 @@ class Page3_data(db.Model):
     def insert_all_Page3_data():
         for xrange_grade in xrange_list:
             for student_id in xrange_grade:
-                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.DateTime).all()
+                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.DateTime.desc()).all()
+                if not list1:
+                    continue
                 list2 = []   #当前学生的所有超市数据
                 for i in list1:
                     if i.orgName in shopList:
@@ -443,6 +448,7 @@ class Page3_data(db.Model):
                 db.session.add(u)
                 db.session.commit()
 
+    #这个函数暂时用不到
     @staticmethod
     def refresh_all_Page3_data():
         for xrange_grade in xrange_list:
@@ -504,7 +510,7 @@ class Page4_data(db.Model):
             for student_id in xrange_grade:
                 list1 = Student_card_consumption.query.filter_by(userId=sudent_id).all()
                 if not list1:   #如果是空列表则
-                    break
+                    continue
                 a_dict = dict()
                 a_dict['Jan_total'] = [0,1]    #列表中的第一个数值代表月支出，第二个数值是当前月份的数值化
                 a_dict['Feb_total'] = [0,2]
@@ -551,7 +557,7 @@ class Page4_data(db.Model):
                 db.session.commit()
     
     def to_json(self):
-        return Page4_data_json = {
+        return json_Page4_data = {
             'userId': self.userId,
             'Page4RichMonthConsum': self.Page4RichMonthConsum,
             'Page4PoorMonthConsum': self.Page4PoorMonthConsum,
@@ -572,6 +578,7 @@ class Page5_data(db.Model):
     Page5totalTransMoney = db.Column(db.Float)
     Page5totalRefectoryTransMoney = db.Column(db.Float)
     Page5totalShopTransMoney = db.Column(db.Float)
+    Page5RankTheWholeSchool = db.Column(db.Integer, default=None)
 
     @staticmethod
     def insert_all_page5_data():
@@ -579,7 +586,7 @@ class Page5_data(db.Model):
             for student_id in grade_xrange:
                 list1 = Student_card_consumption_table.query.filter_by(userId=student_id).all()
                 if not list1:
-                    break
+                    continue
                 totalTransMoney = 0.0
                 for i in list1:
                     totalTransMoney = totalTransMoney + float(i.transMoney)
@@ -592,51 +599,62 @@ class Page5_data(db.Model):
                 for i in list1:
                     if i.orgName in ShopList:
                         totalShopTransMoney = totalShopTransMoney + float(i.transMoney)
-
                 u = Page5_data(
                     userId = student_id,
                     Page5totalTransMoney = totalTransMoney,
                     Page5totalRefectoryTransMoney = totalRefectoryTransMoney,
-                    Page5totalShopTransMoney = totalShopTransMoney
+                    Page5totalShopTransMoney = totalShopTransMoney,
                 )
                 db.session.add(u)
                 db.session.commit()
-
-
-class Public_data(db.Model):
-    """
-        1.华师包子哪家强
-        XX食堂XX窗口：日营业额：XXX 刷卡数目：XXX
-        （ 排名前三的窗口）
-        2.华师食堂日营额大揭秘
-        东一食堂：XXX元
-        东二食堂：XXX元
-        学子食堂：XXX元
-        。。。。
-        按照钱数量的多少排名
-        3.早餐华师最火爆的窗口
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        4.午餐华师最热门的窗口
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        6.晚餐大家都喜欢去的窗口
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-
-        7.华师面食大比拼
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-        XXX食堂XX窗口：刷卡数量XXX日营业额XXX
-    """
-    __tablename__ = 'public_data'
-    __table_args__ = {'mysql_charset':'utf8'}
-    id = db.Column(db)
-
-
+    
     @staticmethod
-    def insert_all_Public_data:
+    def insertAllRanking():
+        list1 = Page5_data.query.order_by(Page5_data.Page5totalTransMoney.asc()).all
+        for xrange_grade in xrange_list:
+            for student_id in xrange_grade:
+                Page5_obj = Page5_data.query.filter_by(userId=student_id).first()
+                if not Page5_obj:
+                    continue
+                db.session.delete(Page5_obj)
+                Page5_obj.Page5RankTheWholeSchool = list1.index(Page5_obj) + 1
+                db.session.add(Page_obj)
+                db.session.commit()
+                
+    
+    def to_json(self):
+        return json_Page5_data = {
+            'userId' : self.UserId,
+            'Page5totalTransMoney' : self.Page5totalTransMoney, 
+            'Page5totalRefectoryTransMoney' : self.Page5totalRefectoryTransMoney,
+            'Page5totalShopTransMoney' : self.Page5totalShopTransMoney,
+            'Page5RankTheWholeSchool' : self.Page5RankTheWholeSchool
+        }
+
+
+#class Public_data(db.Model):
+#    __tablename__ = 'public_data'
+#    __table_args__ = {'mysql_charset':'utf8'}
+#    id = db.Column(db.Integer, primary_key=True)
+#    orgName = db.Column(db.string, unique=True)
+#    totalTransMoney = db.Column(db.Float)
+#    totalMorningTransMoney = db.Column(db.Float)
+#    totalNoonTransMoney = db.Column(db.Float)
+#    totalEveningTransMoney = db.Column(db.Float)
+#
+#    @staticmethod
+#    def insert_all_Public_data():
+#        refectoryList = []
+#        with open('../refectoryOrgName.txt') as f:
+#            
+#            str = f.readline()
+#            if (str[-1:] == '\n'):
+#                str = str[:len(str)-1]
+#            while (str != '')
+#                refectoryList.append(str)
+#                str = f.readline()
+#                if (str[-1:] == )
+#                str = str[:len(str)-1]
+            
+
 
