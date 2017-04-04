@@ -143,9 +143,9 @@ continue	../student_card_consumption/api_v1/__init__.py	/^from . import getData 
 create_app	../student_card_consumption/__init__.py	/^def create_app(config_name = None, main = True):$/;"	kind:function	line:26
 create_engine	../myapplication/_database.py	/^from sqlalchemy import create_engine, MetaData$/;"	kind:namespace	line:1
 cur	../test_script.py	/^cur = conn.cursor()$/;"	kind:variable	line:23
-current_table	../manage.py	/^current_table = Student_card_consumption_table1$/;"	kind:variable	line:40
-current_table	../student_card_consumption/api_v1/getData.py	/^from ...manage import current_table$/;"	kind:namespace	line:6
-current_table	../student_card_consumption/models.py	/^from ..manage import current_table$/;"	kind:namespace	line:18
+Student_card_consumption	../manage.py	/^Student_card_consumption = Student_card_consumption_table1$/;"	kind:variable	line:40
+Student_card_consumption	../student_card_consumption/api_v1/getData.py	/^from ...manage import Student_card_consumption$/;"	kind:namespace	line:6
+Student_card_consumption	../student_card_consumption/models.py	/^from ..manage import Student_card_consumption$/;"	kind:namespace	line:18
 current_timestamp	../manage.py	/^    current_timestamp = datetime.utcnow() + timedelta(hours=8)$/;"	kind:variable	line:91
 current_timestamp	../manage.py	/^current_timestamp = datetime.utcnow() + timedelta(hours=8)$/;"	kind:variable	line:60
 datetime	../_timestamp_insert_test.py	/^from datetime import datetime$/;"	kind:namespace	line:5
@@ -275,7 +275,7 @@ shopList	../test_script.py	/^shopList = ['\/华中师范大学\/后勤集团\/�
 shutdown_session	../myapplication/_manage.py	/^def shutdown_session(exception=None):$/;"	kind:function	line:7
 simple_script.py	../myapplication/for_sqlalchemy/simple_script.py	1;"	kind:file	line:1
 start	../getOrgName.py	/^start = 2016211081$/;"	kind:variable	line:5
-switch_database_table	../manage.py	/^def switch_database_table(table1, table2, current_table):$/;"	kind:function	line:43
+switch_database_table	../manage.py	/^def switch_database_table(table1, table2, Student_card_consumption):$/;"	kind:function	line:43
 sys	../manage.py	/^import sys$/;"	kind:namespace	line:20
 talker	../myapplication/for_flask_script/manage.py	/^def talker(host='localhost'):$/;"	kind:function	line:26
 talker	../myapplication/for_flask_script/manage_temp.py	/^def talker(host='localhost'):$/;"	kind:function	line:20

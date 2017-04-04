@@ -15,6 +15,7 @@ import os
 from flask_sqlalchemy import SQLAlchemy 
 from flask_moment import Moment 
 from STDCC_config import config
+from flask import Flask
 
 
 #Flask extention

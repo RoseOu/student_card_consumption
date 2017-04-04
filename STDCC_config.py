@@ -34,10 +34,11 @@ class DevConfig(Config):
     """
     开发环境下配置
         开启调试器
-        数据库采用mysql数据库 //sqlite也行吧
+        数据库采用mysql数据库       //sqlite也行吧
     """
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('STDCC_ORM_URI')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('STDCC_ORM_URI') or \
+    'sqlite:///' + os.path.join(basedir, 'data-dev.sqlite')
 
 class TestConfig(Config):
     """
@@ -49,7 +50,7 @@ class ProConfig(Config):
     """
     生产环境下的配置
     """
-    SQLALCHEMY_DATABASE_URI = os.getenv("STDCC_ORM_URI")
+    SQLALCHEMY_DATABASE_URI = os.getenv("STDCC_POR_ORM_URI")
 
 config = {
     'develop' : DevConfig, 
