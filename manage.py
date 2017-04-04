@@ -78,10 +78,10 @@ def insert_all_student_consumption_data():
 @manager.command
 def insert_all_Page_data():
     #Page2_data.insert_all_Page2_data()
-    Page3_data.insert_all_Page3_data()
+    #Page3_data.insert_all_Page3_data()
     #Page4_data.insert_all_Page4_data()
     #Page5_data.insert_all_page5_data()
-    #Page5_data.insertAllRanking()
+    Page5_data.insertAllRanking()
     
 @manager.command
 def Hello():

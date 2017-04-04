@@ -52,16 +52,18 @@ ShopList = [
 #获取字典中最大的值
 def getTheLargestKeyStr(a_dict):
     temp = 0
+    biggestKey = ''
     for key in a_dict:
-        if a_dict[key] > temp:
+        if a_dict[key][0] >= temp:
             biggestKey = key
             temp = a_dict[key]
     return biggestKey
 
 def getTheLeastKeyStr(a_dict):
-    temp = 99999999
+    temp = 9999.9
+    smallestKey = ''
     for key in a_dict:
-        if a_dict[key] < temp:
+        if a_dict[key][0] <= temp:
             smallestKey = key
             temp = a_dict[key]
     return smallestKey
@@ -481,20 +483,20 @@ class Page4_data(db.Model):
     """
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, unique=True)
-    Page4RichMonthConsum = db.Column(db.Float)
-    Page4PoorMonthConsum = db.Column(db.Float)
-    Page4RichMonth = db.Column(db.Integer)
-    Page4PoorMonth = db.Column(db.Integer)
+    Page4RichMonthConsum = db.Column(db.Float, default=None)
+    Page4PoorMonthConsum = db.Column(db.Float, default=None)
+    Page4RichMonth = db.Column(db.Integer, default=None)
+    Page4PoorMonth = db.Column(db.Integer, default=None)
 
     @staticmethod
     def insert_all_Page4_data():
-        for xrange_grade in xrangeList:
+        for xrange_grade in xrange_list:
             for student_id in xrange_grade:
-                list1 = Student_card_consumption.query.filter_by(userId=sudent_id).all()
+                list1 = Student_card_consumption_table.query.filter_by(userId=student_id).all()
                 if not list1:   #如果是空列表则
                     continue
                 a_dict = dict()
-                monthList [1, 2, 3, 4, 9, 10, 11, 12]
+                monthList = [1, 2, 3, 4, 9, 10, 11, 12]
                 b_dict = {1:'Jan_total',2:'Feb_total',3:'Mar_total',4:'Apr_total',9:'Sep_total_ly',10:'Oct_total_ly',11:'Nov_total_ly',12:'Dec_total_ly'}
                 a_dict['Jan_total'] = [0,1]    #列表中的第一个数值代表月支出，第二个数值是当前月份的数值化
                 a_dict['Feb_total'] = [0,2]
@@ -505,7 +507,7 @@ class Page4_data(db.Model):
                 a_dict['Nov_total_ly'] = [0,11]
                 a_dict['Dec_total_ly'] = [0,12]
                 for i in list1:
-                    month = int(str(i.dealDateTimestamp)[6:8])
+                    month = int(str(i.dealDateTimestamp)[5:7])
                     if month in monthList:
                         a_dict[b_dict[month]][0] = a_dict[b_dict[month]][0] + float(i.transMoney)
 
@@ -514,8 +516,8 @@ class Page4_data(db.Model):
                 maxkey = getTheLargestKeyStr(a_dict)
                 minkey = getTheLeastKeyStr(a_dict)
     
-                P4RichMonth = a_dict['maxkey'][1]#最大的那个变量名
-                P4PoorMonth = a_dict['minkey'][1]#最小的那个变量名
+                P4RichMonth = a_dict[maxkey][1]#最大的那个变量名
+                P4PoorMonth = a_dict[minkey][1]#最小的那个变量名
                 P4RichMonthConsum = a_dict[maxkey][0]
                 P4PoorMonthConsum = a_dict[minkey][0]
                 
@@ -565,16 +567,13 @@ class Page5_data(db.Model):
                 if not list1:
                     continue
                 totalTransMoney = 0.0
-                for i in list1:
-                    totalTransMoney = totalTransMoney + float(i.transMoney)
                 totalRefectoryTransMoney = 0.0
-                for i in list1:
-                    if (i.orgName[:17] == '/华中师范大学/后勤集团/饮食中心') or (i.orgName == "/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
-                       totalRefectoryTransMoney = totalRefectoryTransMoney + float(i.transMoney)
-                
                 totalShopTransMoney = 0.0
                 for i in list1:
-                    if i.orgName in ShopList:
+                    totalTransMoney = totalTransMoney + float(i.transMoney)
+                    if (i.orgName[:16] == '华中师范大学/后勤集团/饮食中心') or (i.orgName == "华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
+                        totalRefectoryTransMoney = totalRefectoryTransMoney + float(i.transMoney)
+                    elif i.orgName in ShopList:
                         totalShopTransMoney = totalShopTransMoney + float(i.transMoney)
                 u = Page5_data(
                     userId = student_id,
@@ -587,7 +586,7 @@ class Page5_data(db.Model):
     
     @staticmethod
     def insertAllRanking():
-        list1 = Page5_data.query.order_by(Page5_data.Page5totalTransMoney.asc()).all
+        list1 = Page5_data.query.order_by(Page5_data.Page5totalTransMoney.asc()).all()
         for xrange_grade in xrange_list:
             for student_id in xrange_grade:
                 Page5_obj = Page5_data.query.filter_by(userId=student_id).first()
@@ -595,7 +594,7 @@ class Page5_data(db.Model):
                     continue
                 db.session.delete(Page5_obj)
                 Page5_obj.Page5RankTheWholeSchool = list1.index(Page5_obj) + 1
-                db.session.add(Page_obj)
+                db.session.add(Page5_obj)
                 db.session.commit()
                 
     
