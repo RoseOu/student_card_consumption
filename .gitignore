@@ -4,3 +4,4 @@ myapplication/
 /test_script.py
 /getOrgName.py
 *.sqlite
+/migrate

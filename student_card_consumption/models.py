@@ -237,21 +237,25 @@ class Page2_data(db.Model):
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
                 #获取最大学生单次消费的记录
-                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.transMoney).all()
+                list1 = Student_card_consumption_table.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.transMoney.desc()).all()
                 if not list1:
                     break
                 list2 = []
                 dict1 = dict() #用于比较此学生在各个餐厅的刷卡数量
                 for i in list1:
-                    if (i.orgName[:17] == '/华中师范大学/后勤集团/饮食中心') or (i.orgName == "/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
+                    if (i.orgName[:16] == '华中师范大学/后勤集团/饮食中心') or (i.orgName == "华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
                         list2.append(i)
-                P2singleTransMoney = float(list2[0].transMoney)
-                P2Timestamp = transSToTS(list2[0].dealDateTimestamp)
+                if len(list2) != 0:
+                    P2singleTransMoney = float(list2[0].transMoney)
+                    P2Timestamp = list2[0].dealDateTimestamp           #这里返回的就是timestamp类型数据
+                else:
+                    P2singleTransMoney = 0.0
+                    P2Timestamp = None
                 for i in list2:
                     if dict1.has_key(i.orgName):
                         dict1[i.orgName] = dict1[i.orgName] + 1
                     else:
-                        dict1.setdefault(i.orgName, default=1)
+                        dict1.setdefault(i.orgName, 1)
                 P2favOrgName = getTheLargestKeyStr(dict1)
                 P2favOrgNameCount = dict1[P2favOrgName]
                 P2favOrgNameTotalTransMoney = 0
@@ -266,7 +270,7 @@ class Page2_data(db.Model):
                 noonList = []
                 eveningList = []
                 for i in list2:
-                    dealclock = int(str(transSToTS(i.dealDateTimestamp))[11:13])
+                    dealclock = int(str(i.dealDateTimestamp)[11:13])
                     if (dealclock <= 9) and (dealclock >= 6):
                         morningList.append(i)
                     elif (dealclock >= 11) and (dealclock <= 14):
@@ -283,7 +287,7 @@ class Page2_data(db.Model):
                             Page2favOrgNameCount = P2favOrgNameCount,
                             Page2favOrgNameTotalTransMoney = P2favOrgNameTotalTransMoney,
                             Page2totalRefectoryConsumed = P2totalRefectoryConsumed,
-                            Page2Rain = P2Rain
+                            Page2Rian = P2Rain
                 )
                 db.session.add(u)
                 db.session.commit()
@@ -378,34 +382,40 @@ class Page3_data(db.Model):
     __table_args__ = {'mysql_charset':'utf8'}
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, unique=True, index=True)
-    Page3Timestamp = db.Column(db.DateTime)
-    Page3totalTransMoney = db.Column(db.Float)
-    Page3totalShoppingCount = db.Column(db.Integer)
-    Page3totalShoppingConsumed = db.Column(db.Float)
+    Page3Timestamp = db.Column(db.DateTime, default=None)
+    Page3totalTransMoney = db.Column(db.Float, default=None)
+    Page3totalShoppingCount = db.Column(db.Integer, default=None)
+    Page3totalShoppingConsumed = db.Column(db.Float, default=None)
 
     @staticmethod
     def insert_all_Page3_data():
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
-                list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption.DateTime.desc()).all()
+                list1 = Student_card_consumption_table.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.dealDateTimestamp.desc()).all()
                 if not list1:
                    continue
                 list2 = []   #当前学生的所有超市数据
                 for i in list1:
-                    if i.orgName in otherlist:
+                    if i.orgName in ShopList:
                         list2.append(i)
-                highestShopTransMoney = float(list2[0].transMoney)
-                HSTM_sqlalchemyobj = list2[0]
-                for i in list2:
-                    if i.transMoney >= HSTM_sqlalchemyobj.transMoney:
-                        HSTM_sqlalchemyobj = i
-                P3Timestamp = HSTM_sqlalchemyobj.dealDateTimestamp
-                P3totalTransMoney = float(HSTM_sqlalchemyobj.transMoney)
-                P3totalShoppingCount = len(list2)
-                total = 0.0
-                for i in list2:
-                    total = total + float(i.transMoney)
-                P3totalShoppingConsumed = total
+                if list2:
+                    highestShopTransMoney = float(list2[0].transMoney)
+                    HSTM_sqlalchemyobj = list2[0]
+                    for i in list2:
+                        if i.transMoney >= HSTM_sqlalchemyobj.transMoney:
+                            HSTM_sqlalchemyobj = i
+                    P3Timestamp = HSTM_sqlalchemyobj.dealDateTimestamp
+                    P3totalTransMoney = float(HSTM_sqlalchemyobj.transMoney)
+                    P3totalShoppingCount = len(list2)
+                    total = 0.0
+                    for i in list2:
+                        total = total + float(i.transMoney)
+                    P3totalShoppingConsumed = total
+                else: 
+                    P3Timestamp = None
+                    P3totalShoppingConsumed = None
+                    P3totalShoppingCount = None
+                    P3totalTransMoney = None
                 u = Page3_data(userId = student_id,
                                Page3Timestamp = P3Timestamp,
                                Page3totalTransMoney = P3totalTransMoney,
