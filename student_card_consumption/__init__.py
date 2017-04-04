@@ -48,5 +48,4 @@ def create_app(config_name = None, main = True):
     return app
 
 #student_card_consumption app
-app = create_app(config_name = os.getenv('STDCC_CONFIG') or 'default')
-
+app = create_app(config_name = os.getenv('STDCC_config') or 'default')
