@@ -34,19 +34,19 @@ _xrange_list = [xrange_2013, xrange_2014, xrange_2015, xrange_2016]
 #其他列表消费点的列表
 #除了食堂外的全部
 otherlist = [
-'/华中师范大学/后勤集团/商贸中心/超市/学子超市',
-'/华中师范大学/校内经营商户/爱心超市', 
-'/华中师范大学/结账商户/可美克滋', 
-'/华中师范大学/后勤集团/商贸中心/超市/满江红超市', 
-'/华中师范大学/校内经营商户/阳光咖啡'
+    '华中师范大学/后勤集团/商贸中心/超市/学子超市',
+    '华中师范大学/校内经营商户/爱心超市', 
+    '华中师范大学/结账商户/可美克滋', 
+    '华中师范大学/后勤集团/商贸中心/超市/满江红超市', 
+    '华中师范大学/校内经营商户/阳光咖啡'
 ]
 
 #真超市列表
 #专门指特定的几个超市
 ShopList = [
-'/华中师范大学/后勤集团/商贸中心/超市/学子超市',
-'/华中师范大学/校内经营商户/爱心超市', 
-'/华中师范大学/后勤集团/商贸中心/超市/满江红超市', 
+'华中师范大学/后勤集团/商贸中心/超市/学子超市',
+'华中师范大学/校内经营商户/爱心超市', 
+'华中师范大学/后勤集团/商贸中心/超市/满江红超市', 
 ]
 
 #获取字典中最大的值
@@ -132,28 +132,29 @@ class Student_card_consumption_table(db.Model):
     def insert_all_consumption_data():
         for grade_xrange in xrange_list:
             for student_id in grade_xrange:
-                    current_timestamp = datetime.utcnow() + timedelta(hours=8)
-                    diff_days = (current_timestamp - datetime(2016,9,1)).days
-                    
-                    url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
-                    + str(student_id) + '&days=' + str(diff_days) + '&startNum=0&num=10000'       
-                    response = getResponse(url)
-                    responseJson = json.loads(response)
-                    try:
-                        for each_info in responseJson:
-                            if (each_info['orgName'][:17] == '华中师范大学/后勤集团/饮食中心') or \
-                            each_info['orgName'] == '/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅':
-                                #把数据插入数据库
-                                User.insert_consumption_data(each_info, student_id)
-                            elif each_info['orgName'] in otherlist:
-                                User.insert_consumption_data(each_info, student_id)
-                    except TypeError as e:
-                        continue
-
+                current_timestamp = datetime.utcnow() + timedelta(hours=8)
+                diff_days = (current_timestamp - datetime(2016,9,1)).days
+                   
+                url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
+                + str(student_id) + '&days=' + str(diff_days) + '&startNum=0&num=10'       
+                response = getResponse(url)
+                responseJson = json.loads(response)
+                if responseJson is None:
+                    continue
+                
+                for each_info in responseJson:
+                    if (each_info['orgName'][:16] == '华中师范大学/后勤集团/饮食中心') or \
+                    each_info['orgName'] == '华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅':
+                        #把数据插入数据库
+                        Student_card_consumption_table.insert_consumption_data(each_info, student_id)
+                    elif each_info['orgName'] in otherlist:
+                        print '添加了一个超市级别'
+                        Student_card_consumption_table.insert_consumption_data(each_info, student_id)
+ 
     @staticmethod
     def insert_consumption_data(each_info, userId):     #userId为int型
         Timestamp_str = each_info['dealDateTime']
-        data = Student_card_consumption_table2(userId = userId,
+        data = Student_card_consumption_table(userId = userId,
                                         orgName = each_info['orgName'],
                                         dealDateTimestamp = datetime(int(Timestamp_str[:4]),
                                                                      int(Timestamp_str[5:7]),
@@ -167,6 +168,7 @@ class Student_card_consumption_table(db.Model):
                                         dealTime = Timestamp_str[11:],
                                         transMoney = float(each_info['transMoney'])
                                         )
+        print 'your are current commit ' + str(userId)
         db.session.add(data)
         db.session.commit()
 

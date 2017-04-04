@@ -3,3 +3,4 @@ myapplication/
 /test.py
 /test_script.py
 /getOrgName.py
+*.sqlite

@@ -71,6 +71,7 @@ def test(coverage=False):
 
 @manager.command
 def insert_all_student_consumption_data():
+    db.create_all()
     Student_card_consumption_table.insert_all_consumption_data()
 
 #One command reload all data
