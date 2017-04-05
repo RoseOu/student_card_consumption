@@ -13,6 +13,8 @@
      -- python manage.py update_db  更新数据库
      -- python manage.py runserver
      -- python manage.py test
+     -- python manage.py clear_a_table   清理单个的表(会有位置参数)
+     -- python manage.py clear_all_table 清理所有的表
 """
 import os
 #This place is used for test code
@@ -77,10 +79,10 @@ def insert_all_student_consumption_data():
 #One command reload all data
 @manager.command
 def insert_all_Page_data():
-    #Page2_data.insert_all_Page2_data()
-    #Page3_data.insert_all_Page3_data()
-    #Page4_data.insert_all_Page4_data()
-    #Page5_data.insert_all_page5_data()
+    Page2_data.insert_all_Page2_data()
+    Page3_data.insert_all_Page3_data()
+    Page4_data.insert_all_Page4_data()
+    Page5_data.insert_all_page5_data()
     Page5_data.insertAllRanking()
     
 @manager.command

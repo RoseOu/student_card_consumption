@@ -584,19 +584,16 @@ class Page5_data(db.Model):
                 db.session.add(u)
                 db.session.commit()
     
+    #to be test
     @staticmethod
     def insertAllRanking():
         list1 = Page5_data.query.order_by(Page5_data.Page5totalTransMoney.asc()).all()
-        for xrange_grade in xrange_list:
-            for student_id in xrange_grade:
-                Page5_obj = Page5_data.query.filter_by(userId=student_id).first()
-                if not Page5_obj:
-                    continue
-                db.session.delete(Page5_obj)
-                Page5_obj.Page5RankTheWholeSchool = list1.index(Page5_obj) + 1
-                db.session.add(Page5_obj)
-                db.session.commit()
-                
+        for each_Page5_obj in list1:
+            db.session.delete(each_Page5_obj)
+            each_Page5_obj.Page5RankTheWholeSchool = list1.index(Page5_obj) + 1
+            db.session.add(Page5_obj)
+            db.session.commit()
+        
     
     def to_json(self):
         return  {
