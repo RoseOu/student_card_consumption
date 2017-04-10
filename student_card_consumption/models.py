@@ -19,6 +19,7 @@ import os
 
 totalStudentAmount = 4857 + 4840 + 4840 + 4642
 
+#测试用例
 xrange_list = [xrange(2013210001, 2013210010),
                xrange(2014210001, 2014210010),
                xrange(2015210001, 2015210010), 
@@ -174,27 +175,6 @@ class Student_card_consumption_table(db.Model):
         db.session.add(data)
         db.session.commit()
 
-
-        #@staticmethod
-        #def refresh_all_consumption_data():
-        #    CurrentLocalTimestamp = datetime.utcnow() + timedelta(hours=8)               #野蛮式时间转换
-        #    CurrentLocalTimestamp_aYearAgo = CurrentLocalTimestamp - timedelta(days=365) #野蛮式计算一年前时间 
-        #    #添加新的数据
-        #    for grade_xrange in xrange_list:
-        #        for student_id in grade_xrange:
-        #            url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='\
-        #            + str(student_id) + '&days=365&startNum=0&num=50'  
-        #            response = getResponse(url)
-        #            responseJson = json.loads(response)
-        #            try:
-        #                for each_info in responseJson:
-        #                    if ((each_info['orgName'][:17] == '华中师范大学/后勤集团/饮食中心') or \
-        #                    each_info['orgName'] == '/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅') and :
-
-            #删除旧的数据
-        #    Last100_data = Student_card_consumption.order_by
-
-
     def __repr__(self):
         return "<Student_card_consumption %r>" % self.id     #???
 
@@ -293,67 +273,7 @@ class Page2_data(db.Model):
                 )
                 db.session.add(u)
                 db.session.commit()
-            
 
-    #@staticmethod
-    #def refresh_all_Page2_data():
-    #    for grade_xrange in xrange_list:
-    #        for student_id in grade_xrange:
-    #            list1 = Student_card_consumption.query.filter_by(userId=student_id).order_by(Student_card_consumption_table.transMoney).all()
-    #            list2 = []
-    #            dict1 = dict() #用于比较此学生在各个餐厅的刷卡数量
-    #            for i in list1:
-    #                if (i.orgName[:17] == '/华中师范大学/后勤集团/饮食中心') or (i.orgName == "/华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅"):
-    #                    list2.append(i)
-    #            if list2[0].dealDateTimestamp != Page2_data.query.filter_by(userId=student_id).first().Page2Timestamp:
-    #                P2singleTransMoney = float(list2[0].transMoney)
-    #                P2Timestamp = transSToTS(list2[0].dealDateTimestamp)
-    #                u = Page2_data.query.filter_by(userId=student_id).first()
-    #                db.session.delete(u)
-    #                u.Page2singleTransMoney = P2singleTransMoney
-    #                u.Page2Timestamp = P2Timestamp
-    #                db.session.add(u)
-    #                db.session.commit()
-    #
-    #           
-    #             for i in list2:
-    #                 if dict1.has_key(i.orgName):
-    #                     dict1[i.orgName] = dict1[i.orgName] + 1
-    #                 else:
-    #                     dict1.setdefault(i.orgName, default=1)
-    #             P2favOrgName = getTheLargestKeyStr(dict1)
-    #             P2favOrgNameCount = dict1[P2favOrgName]
-    #             P2favOrgNameTotalTransMoney = 0
-    #             for i in list2:
-    #                 if i.orgName = P2favOrgName:
-    #                     P2favOrgNameTotalTransMoney = P2favOrgNameTotalTransMoney + float(i.transMoney)
-    #             P2totalRefectoryConsumed = 0
-    #             for i in list2:
-    #                 P2totalRefectoryConsumed = P2totalRefectoryConsumed + float(i.transMoney)
-    #              
-    #             morningList = []
-    #            noonList = []
-    #             eveningList = []
-    #             for i in list2:
-    #                 dealclock = int(str(transSToTS(i.dealDateTimestamp))[11:13])
-    #                 if (dealclock <= 9) and (dealclock >= 6):
-    #                     morningList.append(i)
-    #                 elif (dealclock >= 11) and (dealclock <= 14):
-    #                     noonList.append(i)
-    #                 elif (dealclock >= 17) and (dealclock <= 20):
-    #                     eveningList.append(
-    #             P2Rain = getRain(morningList, noonList, eveningList)
-    #
-    #             u = Page2_data.query.filter_by(userId=student_id).first()
-    #             db.session.delete(u)
-    #             u.Page2favOrgName = P2favOrgName
-    #             u.Page2favOrgNameCount = P2favOrgNameCount
-    #             u.Page2favOrgNameTotalTransMoney = P2favOrgNameTotalTransMoney
-    #             u.Page2totalRefectoryConsumed = P2totalRefectoryConsumed
-    #             u.Page2Rain = P2Rain 
-    #             db.session.add(u)
-    #             db.session.commit()
-    #    
         def to_json(self):
             json_page2 = {
                 'userId' : self.userId,
@@ -476,15 +396,15 @@ class Page4_data(db.Model):
         竟是最低月份的X倍
         ··································
         col userId: 学生号
-        col Page4RichMonthConsum: 最土豪的月份消费的金额
+        col Page4RichMonthConsumed: 最土豪的月份消费的金额
         col Page4RichMonth: 最土豪的月份
-        col Page4PoorMonthConsum: 最屌丝月份的消费额诶
+        col Page4PoorMonthConsumed: 最屌丝月份的消费额诶
         col Page4PoorMonth: 最屌丝的月份
     """
     id = db.Column(db.Integer, primary_key=True)
     userId = db.Column(db.Integer, unique=True)
-    Page4RichMonthConsum = db.Column(db.Float, default=None)
-    Page4PoorMonthConsum = db.Column(db.Float, default=None)
+    Page4RichMonthConsumed = db.Column(db.Float, default=None)
+    Page4PoorMonthConsumed = db.Column(db.Float, default=None)
     Page4RichMonth = db.Column(db.Integer, default=None)
     Page4PoorMonth = db.Column(db.Integer, default=None)
 
@@ -522,8 +442,8 @@ class Page4_data(db.Model):
                 P4PoorMonthConsum = a_dict[minkey][0]
                 
                 u = Page4_data(userId = student_id,
-                               Page4RichMonthConsum = P4RichMonth,
-                               Page4PoorMonthConsum = P4PoorMonth,
+                               Page4RichMonthConsumed = P4RichMonth,
+                               Page4PoorMonthConsumed = P4PoorMonth,
                                Page4RichMonth = P4PoorMonth,
                                Page4PoorMonth = P4PoorMonth)
                 db.session.add(u)
@@ -532,8 +452,8 @@ class Page4_data(db.Model):
     def to_json(self):
         return {
             'userId': self.userId,
-            'Page4RichMonthConsum' : self.Page4RichMonthConsum,
-            'Page4PoorMonthConsum' : self.Page4PoorMonthConsum,
+            'Page4RichMonthConsumed' : self.Page4RichMonthConsumed,
+            'Page4PoorMonthConsumed' : self.Page4PoorMonthConsumed,
             'Page4PoorMonth' : self.Page4PoorMonth,
             'Page4RichMonth' : self.Page4RichMonth
         }
