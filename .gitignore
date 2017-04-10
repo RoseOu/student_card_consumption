@@ -4,4 +4,5 @@ myapplication/
 /test_script.py
 /getOrgName.py
 *.sqlite
-/migrate
+migrate/
+/_timestamp_insert_test.py
