@@ -10,7 +10,6 @@
     : license: MIT
 """
 from . import db
-import base64
 from urllib import urlopen
 from datetime import datetime, timedelta
 #from pytz import timezone
@@ -144,7 +143,6 @@ class Student_card_consumption_table(db.Model):
                 responseJson = json.loads(response)
                 if responseJson is None:
                     continue
-                
                 for each_info in responseJson:
                     if (each_info['orgName'][:16] == '华中师范大学/后勤集团/饮食中心') or \
                     each_info['orgName'] == '华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅':
@@ -241,17 +239,19 @@ class Page2_data(db.Model):
                 P2favOrgName = getTheLargestKeyStr(dict1)
                 P2favOrgNameCount = dict1[P2favOrgName]
                 P2favOrgNameTotalTransMoney = 0
-                for i in list2:
-                    if i.orgName == P2favOrgName:
-                        P2favOrgNameTotalTransMoney = P2favOrgNameTotalTransMoney + float(i.transMoney)
+
+                #计算出favOrgName窗口的消费总共金额
+                #计算出食堂总共消费额度
+                #给list2中的消费记录进行早中晚分类
                 P2totalRefectoryConsumed = 0
-                for i in list2:
-                    P2totalRefectoryConsumed = P2totalRefectoryConsumed + float(i.transMoney)
-                
                 morningList = []
                 noonList = []
                 eveningList = []
                 for i in list2:
+                    if i.orgName == P2favOrgName:
+                        P2favOrgNameTotalTransMoney = P2favOrgNameTotalTransMoney + float(i.transMoney)
+                    P2totalRefectoryConsumed = P2totalRefectoryConsumed + float(i.transMoney)
+                
                     dealclock = int(str(i.dealDateTimestamp)[11:13])
                     if (dealclock <= 9) and (dealclock >= 6):
                         morningList.append(i)
@@ -346,7 +346,7 @@ class Page3_data(db.Model):
                 db.session.add(u)
                 db.session.commit()
 
-    #这个函数暂时用不到
+    #更新数据库函数
     @staticmethod
     def refresh_all_Page3_data():
         for grade_xrange in xrange_list:
