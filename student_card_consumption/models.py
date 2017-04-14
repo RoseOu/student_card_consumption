@@ -172,7 +172,7 @@ class Student_card_consumption_table(db.Model):
         print 'your are current commit ' + str(userId)
         db.session.add(data)
         db.session.commit()
-
+    
     def __repr__(self):
         return "<Student_card_consumption %r>" % self.id     #???
 
