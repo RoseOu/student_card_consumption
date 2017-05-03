@@ -16,7 +16,7 @@ http://console.ccnu.edu.cn/ecard/getTrans?userId=Int&days=Int&startNum=Int&num=I
 
 ### API文档
 
-URL: /api/consume/<int:id>/
+URL: /api/consume/< int:id >/
 
 METHOD:GET
 
