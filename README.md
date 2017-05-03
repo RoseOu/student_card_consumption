@@ -16,33 +16,33 @@ http://console.ccnu.edu.cn/ecard/getTrans?userId=Int&days=Int&startNum=Int&num=I
 
 ### API文档
 
-URL: /api/consume/< int:id >/
+URL: /api/consume/\<int:id\>/
 
 METHOD:GET
 
 RESPONSE DATA: 
 ```
 { 
-    "fangsiDate":String,     //最放肆的一顿日期 
-    "fangsiCost":Float,      //最放肆的一顿消费 
-    "tuhaoMonth":Int,        //最土豪的月份 
-    "tuhaoCost":Float,       //最土豪月份的消费 
-    "tuhaoMul":Float,        //最土豪月份消费是最低月份的倍数 
-    "totalCost":Float,       //近300天内在食堂总共消费 
-    "highestCost":Int,       //最高消费是那一餐，1为早餐，2为午餐，3为晚餐 
-    "favorite":String,       //最爱的窗口 
-    "favorNum":Int,          //在最爱的窗口吃了几顿 
-    "favorCost":Float,       //在最爱的窗口总共消费 
-    "duoshouDate":String,    //在超市剁手的日期 
-    "duoshouCost":Float,     //挥霍了几元 
-    "duoshouNum":Int,        //共计在超市刷卡几次 
-    "chaoshiCost":Float,     //在超市累计消费 
-    "shitangPercent":Float,  //食堂消费占比 
-    "chaoshiPercent":Float,  //超市消费占比 
-    "qitaPercent":Float,     //其他消费占比 
-    "daysNum":300,           //近一年300天内 
-    "cost":Float,            //共消费XX元 
-    "over":Float,            //超过全校百分之几人 
-    "rank":Int,              //全校排名 
+    "fangsiDate":String,     //9月1日到现在最放肆的一顿的日期 
+    "fangsiCost":Float,      //9月1日到现在最放肆的一顿消费 
+    "tuhaoMonth":Int,        //9月1日到现在最土豪的月份 
+    "tuhaoCost":Float,       //9月1日到现在最土豪月份的消费 
+    "tuhaoMul":Float,        //9月1日到现在最土豪月份消费是最低月份的倍数 
+    "totalCost":Float,       //9月1日到现在在食堂总共消费 
+    "highestCost":Int,       //9月1日到现在最高消费是什么餐，1为早餐，2为午餐，3为晚餐 
+    "favorite":String,       //9月1日到现在消费最高的窗口（最爱的窗口）
+    "favorNum":Int,          //9月1日到现在在最爱的窗口吃了几顿 
+    "favorCost":Float,       //9月1日到现在在最爱的窗口总共消费 
+    "duoshouDate":String,    //9月1日到现在在超市消费最高（剁手）的日期
+    "duoshouCost":Float,     //9月1日到现在在超市消费最高那天挥霍了几元 
+    "duoshouNum":Int,        //9月1日到现在共计在超市刷卡几次 
+    "chaoshiCost":Float,     //9月1日到现在在超市的累计消费 
+    "shitangPercent":Float,  //9月1日到现在食堂消费占比 
+    "chaoshiPercent":Float,  //9月1日到现在超市消费占比 
+    "qitaPercent":Float,     //9月1日到现在其他消费占比 
+    "daysNum":300,           //9月1日到现在共有多少天 
+    "cost":Float,            //9月1日到现在共消费XX元 
+    "over":Float,            //9月1日到现在的消费超过全校百分之几人 
+    "rank":Int,              //9月1日到现在的消费在全校排名 
 } 
 ```
