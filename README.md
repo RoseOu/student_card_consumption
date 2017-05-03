@@ -21,6 +21,7 @@ URL: /api/consume/<int:id>/
 METHOD:GET
 
 RESPONSE DATA: 
+```
 { 
     "fangsiDate":String,     //最放肆的一顿日期 
     "fangsiCost":Float,      //最放肆的一顿消费 
@@ -44,3 +45,4 @@ RESPONSE DATA:
     "over":Float,            //超过全校百分之几人 
     "rank":Int,              //全校排名 
 } 
+```
