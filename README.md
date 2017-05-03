@@ -33,8 +33,8 @@ RESPONSE DATA:
     "CanteenTotalCost":Float,          //9月1日到4月30日在食堂总共消费 
     "CanteenWhatMan":Int,              //9月1日到4月30日在食堂消费最高是什么餐，1为早餐，2为午餐，3为晚餐 
     "CanteenFavorite":String,          //9月1日到4月30日在食堂消费最高的窗口（最爱的窗口）
-    "CanteenFavorNum":Int,             //9月1日到4月30日在最爱的窗口吃了几顿 
-    "CanteenfavorCost":Float,          //9月1日到4月30日在最爱的窗口总共消费 
+    "CanteenFavoriteNum":Int,          //9月1日到4月30日在最爱的窗口吃了几顿 
+    "CanteenfavoriteCost":Float,       //9月1日到4月30日在最爱的窗口总共消费 
     
     "MarketWantonDate":String,         //9月1日到4月30日在超市消费最高（剁手）的日期
     "MarketWantonCost":Float,          //9月1日到4月30日在超市消费最高那天挥霍了几元 
