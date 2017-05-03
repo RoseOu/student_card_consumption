@@ -20,7 +20,7 @@ http://console.ccnu.edu.cn/ecard/getTrans?userId=Int&days=Int&startNum=Int&num=I
 
 **METHOD:** GET
 
-**RESPONSE DATA: **
+**RESPONSE DATA:**
 
 ```
 { 
