@@ -1,10 +1,8 @@
 *.pyc
-myapplication/
-/test.py
-/test_script.py
-/getOrgName.py
 *.sqlite
 migrations/
-/_timestamp_insert_test.py
 .vscode/
 /data-dev.sqlite
+__pycache__/
+venv/
+.DS_Store
