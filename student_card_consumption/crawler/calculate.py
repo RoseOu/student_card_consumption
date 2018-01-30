@@ -192,5 +192,6 @@ def calculate_all():
         market_total(student)
         percent_and_total(student)
         over_and_rank(student)
+        print("calculate 1!")
 
 
