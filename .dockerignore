@@ -1,0 +1,5 @@
+.git
+venv/
+migrations/
+.dockerignore
+.DS_Store
