@@ -1,6 +1,6 @@
 stdcc:
     build: .
     container_name: stdcc
-    command: uwsgi --http-socket :8282 --wsgi-file wsgi.py --callable app --master --enable-threads
+    command: gunicorn --name stdcc -b 0.0.0.0:8282 -w 2 wsgi:app
     ports:
         - "8282:8282"
