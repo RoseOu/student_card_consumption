@@ -3,6 +3,12 @@ from flask import jsonify
 from . import api
 from ..models import Student
 
+@api.route('/consumption/test/', methods=['GET'])
+def test():
+    return jsonify({
+        "hi":"hi"
+        })
+
 @api.route('/consumption/<int:id>/', methods=['GET'])
 def get_consumption(id):
     student = Student.query.filter_by(studentid=id).first()
