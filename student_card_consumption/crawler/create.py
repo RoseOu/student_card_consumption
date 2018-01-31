@@ -38,7 +38,7 @@ def create_deals(studentlist):
     for sl in studentlist:
         for studentid in sl:
             if Student.query.filter_by(studentid=studentid).first():
-                url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='+str(studentid)+'&days=300&startNum=0&num=3000'
+                url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='+str(studentid)+'&days=365&startNum=0&num=3650'
                 dicrequest=urllib2.Request(url)
                 dicresponse=urllib2.urlopen(dicrequest)
                 dicthtml = dicresponse.read()
