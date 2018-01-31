@@ -57,5 +57,5 @@ def create_deals(studentlist):
                                     deal.student = student
                                     db.session.add(deal)
                                     db.session.commit()
-                    print "add 1 student deal!"+student.id
+                    print "add 1 student deal!"+str(student.id)
 
