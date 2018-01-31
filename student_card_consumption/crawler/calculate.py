@@ -6,22 +6,22 @@ from ..models import Student,Deal
 import json
 
 canteenlist=[
-        '华中师范大学/后勤集团/饮食中心/学子餐厅',
-        '华中师范大学/后勤集团/饮食中心/东二餐厅',
-        '华中师范大学/后勤集团/饮食中心/桂香园餐厅新',
-        '华中师范大学/后勤集团/饮食中心/东一餐厅新',
-        '华中师范大学/后勤集团/饮食中心/南湖校区餐厅',
-        '华中师范大学/后勤集团/饮食中心/博雅园餐厅',
-        '华中师范大学/后勤集团/饮食中心/沁园春餐厅',
-        '华中师范大学/后勤集团/饮食中心/学子中西餐厅',
-        '华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅'
+        u'华中师范大学/后勤集团/饮食中心/学子餐厅',
+        u'华中师范大学/后勤集团/饮食中心/东二餐厅',
+        u'华中师范大学/后勤集团/饮食中心/桂香园餐厅新',
+        u'华中师范大学/后勤集团/饮食中心/东一餐厅新',
+        u'华中师范大学/后勤集团/饮食中心/南湖校区餐厅',
+        u'华中师范大学/后勤集团/饮食中心/博雅园餐厅',
+        u'华中师范大学/后勤集团/饮食中心/沁园春餐厅',
+        u'华中师范大学/后勤集团/饮食中心/学子中西餐厅',
+        u'华中师范大学/后勤集团/商贸中心/蓝色港湾餐厅'
         ]
 
 marketlist=[
-        '华中师范大学/后勤集团/商贸中心/超市/学子超市',
-        '华中师范大学/校内经营商户/爱心超市',
-        '华中师范大学/后勤集团/商贸中心/超市/满江红超市',
-        ' 华中师范大学/后勤集团/商贸中心/超市/沁园春超市'
+        u'华中师范大学/后勤集团/商贸中心/超市/学子超市',
+        u'华中师范大学/校内经营商户/爱心超市',
+        u'华中师范大学/后勤集团/商贸中心/超市/满江红超市',
+        u' 华中师范大学/后勤集团/商贸中心/超市/沁园春超市'
         ]
 
 def get_canteen_deals(student):
@@ -39,7 +39,7 @@ def canteen_wanton_meal(student):
         if cd.transMoney >= maxdeal.transMoney:
             maxdeal = cd
     datelist = maxdeal.dealDateTime.split()[0].split('-')
-    student.CanteenWantonDate = datelist[0]+"年"+str(int(datelist[1]))+"月"+str(int(datelist[2]))+"日"
+    student.CanteenWantonDate = datelist[0]+u"年"+str(int(datelist[1]))+u"月"+str(int(datelist[2]))+u"日"
     student.CanteenWantonCost = round(maxdeal.transMoney,2)
     db.session.add(student)
     db.session.commit()
