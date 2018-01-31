@@ -38,7 +38,7 @@ def create_deals(studentlist):
     for sl in studentlist:
         for studentid in sl:
             if Student.query.filter_by(studentid=studentid).first():
-                url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='+str(studentid)+'&days=365&startNum=0&num=3650'
+                url = 'http://console.ccnu.edu.cn/ecard/getTrans?userId='+str(studentid)+'&days=400&startNum=0&num=3650'
                 dicrequest=urllib2.Request(url)
                 dicresponse=urllib2.urlopen(dicrequest)
                 dicthtml = dicresponse.read()
@@ -47,11 +47,13 @@ def create_deals(studentlist):
                     student = Student.query.filter_by(studentid=studentid).first()
                     for d in dictjson:
                         if d['dealTypeName'] == u"消费":
-                            deal = Deal()
-                            deal.dealDateTime = d['dealDateTime']
-                            deal.orgName = d['orgName']
-                            deal.transMoney = d['transMoney']
-                            deal.student = student
-                            db.session.add(deal)
-                            db.session.commit()
-                    print "add 1 student deal!"
+                            if int(d['dealDateTime'].split()[0].split('-')[0])==2017:
+                                deal = Deal()
+                                deal.dealDateTime = d['dealDateTime']
+                                deal.orgName = d['orgName']
+                                deal.transMoney = d['transMoney']
+                                deal.student = student
+                                db.session.add(deal)
+                                db.session.commit()
+                        print "add 1 student deal!"
+
