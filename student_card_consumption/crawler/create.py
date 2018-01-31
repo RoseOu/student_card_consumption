@@ -48,12 +48,14 @@ def create_deals(studentlist):
                     for d in dictjson:
                         if d['dealTypeName'] == u"消费":
                             if int(d['dealDateTime'].split()[0].split('-')[0])==2017:
-                                deal = Deal()
-                                deal.dealDateTime = d['dealDateTime']
-                                deal.orgName = d['orgName']
-                                deal.transMoney = d['transMoney']
-                                deal.student = student
-                                db.session.add(deal)
-                                db.session.commit()
-                        print "add 1 student deal!"
+                                if not Deal.query.filter_by(student_id=student.id).filter_by(dealDateTime=d['dealDateTime']) \
+                                .filter_by(orgName=d['orgName']).filter_by(transMoney=d['transMoney']).first():
+                                    deal = Deal()
+                                    deal.dealDateTime = d['dealDateTime']
+                                    deal.orgName = d['orgName']
+                                    deal.transMoney = d['transMoney']
+                                    deal.student = student
+                                    db.session.add(deal)
+                                    db.session.commit()
+                    print "add 1 student deal!"
 
