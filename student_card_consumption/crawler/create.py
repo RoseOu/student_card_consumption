@@ -48,7 +48,7 @@ def create_deals(studentlist):
                     for d in dictjson:
                         if d['dealTypeName'] == u"消费":
                             if int(d['dealDateTime'].split()[0].split('-')[0])==2017:
-                                if not Deal.query.filter_by(student=student).filter_by(dealDateTime=d['dealDateTime']):
+                                if not Deal.query.filter_by(student=student).filter_by(dealDateTime=d['dealDateTime']).first():
                                     deal = Deal()
                                     deal.dealDateTime = d['dealDateTime']
                                     deal.orgName = d['orgName']

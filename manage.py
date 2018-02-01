@@ -32,7 +32,8 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def add2014():
-    student2014=range(2014210001, 2014214841)
+    #student2014=range(2014210001, 2014214841)
+    student2014=range(2014210700, 2014214841)
     studentlist = [student2014]
     #create.create_students(studentlist)
     print "-- create_student done! --"
