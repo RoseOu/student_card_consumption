@@ -24,7 +24,7 @@ marketlist=[
         u' 华中师范大学/后勤集团/商贸中心/超市/沁园春超市'
         ]
 
-def get_canteen_deals(student):
+def get_canteen_deals(student):   #返回某学生在所有食堂的消费记录
     canteen_deals = []
     for deal in student.deals:
         for c in canteenlist:
@@ -32,7 +32,7 @@ def get_canteen_deals(student):
                 canteen_deals.append(deal)
     return canteen_deals
 
-def canteen_wanton_meal(student):
+def canteen_wanton_meal(student):  #计算某学生在食堂消费最高(最放肆)的一顿的日期和金额
     canteen_deals = [d for d in get_canteen_deals(student)]
     maxdeal = student.deals[0]
     for cd in canteen_deals:
@@ -44,9 +44,9 @@ def canteen_wanton_meal(student):
     db.session.add(student)
     db.session.commit()
 
-def canteen_wanton_month(student):
+def canteen_wanton_month(student):  #计算某学生在食堂消费最高的月份、金额及是消费的最低月份的倍数
     canteen_deals = [d for d in get_canteen_deals(student)]
-    month_dict={9:0.0, 10:0.0, 11:0.0, 12:0.0, 1:0.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0}
+    month_dict={9:0.0, 10:0.0, 11:0.0, 12:0.0, 1:0.0, 2:0.0, 3:0.0, 4:0.0, 5:0.0, 6:0.0, 7:0.0, 8:0.0}
     for cd in canteen_deals:
         month = int(cd.dealDateTime.split()[0].split('-')[1])
         if month in month_dict:
@@ -59,7 +59,7 @@ def canteen_wanton_month(student):
     db.session.add(student)
     db.session.commit()
 
-def canteen_total(student):
+def canteen_total(student):  #计算某学生在食堂总消费及在食堂消费最高是什么餐
     canteen_deals = [d for d in get_canteen_deals(student)]
     total_cost = 0.0
     breakfast_cost = 0.0
@@ -85,7 +85,7 @@ def canteen_total(student):
     db.session.add(student)
     db.session.commit()
 
-def canteen_favorite(student):
+def canteen_favorite(student):   #计算某学生在食堂消费最高的窗口、在最爱的窗口吃了几顿及在最爱的窗口的总共消费
     canteen_deals = [d for d in get_canteen_deals(student)]
     cost_dict = {}
     num_dict = {}
@@ -100,7 +100,7 @@ def canteen_favorite(student):
     max_num = num_dict[max_eat[0]]
     max_cost = max_eat[1]
     max_org = max_eat[0].split("/")
-    if max_org[-1] in ["一楼","二楼"]:
+    if max_org[-1] in [u"一楼",u"二楼"]:
         max_name = max_org[-2]+max_org[-1]
     else:
         max_name = max_org[-3]+max_org[-2]+max_org[-1]
@@ -110,7 +110,7 @@ def canteen_favorite(student):
     db.session.add(student)
     db.session.commit()
 
-def get_market_deals(student):
+def get_market_deals(student):  #返回某学生在所有超市的消费记录
     market_deals = []
     for deal in student.deals:
         for m in marketlist:
@@ -118,7 +118,7 @@ def get_market_deals(student):
                 market_deals.append(deal)
     return market_deals
 
-def market_wanton_buy(student):
+def market_wanton_buy(student):  #计算某学生在超市消费最高的日期、那天的总消费金额
     market_deals = [d for d in get_market_deals(student)]
     deal_dict={}
     for md in market_deals:
@@ -129,14 +129,14 @@ def market_wanton_buy(student):
             deal_dict[date] = md.transMoney
     max_deal = max(deal_dict.items(), key=lambda x: x[1])
     max_date_list = max_deal[0].split('-')
-    max_date = max_date_list[0]+"年"+str(int(max_date_list[1]))+"月"+str(int(max_date_list[2]))+"日"
+    max_date = max_date_list[0]+u"年"+str(int(max_date_list[1]))+u"月"+str(int(max_date_list[2]))+u"日"
     max_cost = max_deal[1]
     student.MarketWantonDate = max_date
     student.MarketWantonCost = round(max_cost,2)
     db.session.add(student)
     db.session.commit()
 
-def market_total(student):
+def market_total(student):  #计算某学生共计在超市刷卡几次、在超市的累计消费
     market_deals = [d for d in get_market_deals(student)]
     num = 0
     cost  = 0.0
@@ -148,7 +148,7 @@ def market_total(student):
     db.session.add(student)
     db.session.commit()
 
-def percent_and_total(student):
+def percent_and_total(student):  #计算某学生在食堂消费占比、在超市消费占比、其他消费占比、共有多少天、共消费多少元
     all_deals = [d0 for d0 in student.deals]
     canteen_deals = [d1 for d1 in get_canteen_deals(student)]
     market_deals = [d2 for d2 in get_market_deals(student)]
@@ -167,12 +167,12 @@ def percent_and_total(student):
     student.CanteenPercent = canteen_percent
     student.MarketPercent = market_percent
     student.OtherPercent = other_percent
-    student.DaysNum = 300
+    student.DaysNum = 365
     student.TotalCost = round(all_cost,2)
     db.session.add(student)
     db.session.commit()
 
-def over_and_rank(student):
+def over_and_rank(student):   #计算某学生的总消费超过全校百分之几的人 (0.XX)、他的总消费在全校的排名
     order_students = Student.query.order_by(Student.TotalCost.desc()).all()
     student_num = Student.query.count()
     rank = order_students.index(student)+1
@@ -191,7 +191,11 @@ def calculate_all():
         market_wanton_buy(student)
         market_total(student)
         percent_and_total(student)
-        over_and_rank(student)
         print "calculate 1!"
+    print "calculate done!"
+    for student in Student.query.all():
+        over_and_rank(student)
+        print "rank 1!"
+    print "rank done!"
 
 
