@@ -51,6 +51,12 @@ def canteen_wanton_month(student):  #计算某学生在食堂消费最高的月�
         month = int(cd.dealDateTime.split()[0].split('-')[1])
         if month in month_dict:
             month_dict[month] = month_dict[month] + cd.transMoney
+    alist = []
+    for md in month_dict:
+        if month_dict[md] == 0:
+            alist.append(md)
+    for al in alist:
+        month_dict.pop(al)
     min_month = min(month_dict.items(), key=lambda x: x[1])
     max_month = max(month_dict.items(), key=lambda x: x[1])
     student.CanteenWantonMonth = max_month[0]
