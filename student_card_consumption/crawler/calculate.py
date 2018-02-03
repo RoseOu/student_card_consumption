@@ -204,4 +204,14 @@ def calculate_all():
         print "rank 1!"
     print "rank done!"
 
-
+def calculate_test(studentid):
+    student = Student.query.filter_by(studentid=studentid)
+    canteen_wanton_meal(student)
+    canteen_wanton_month(student)
+    canteen_total(student)
+    canteen_favorite(student)
+    market_wanton_buy(student)
+    market_total(student)
+    percent_and_total(student)
+    print "calculate one student done!"
+    
