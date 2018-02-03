@@ -73,6 +73,11 @@ def calculate_all_students():
     calculate.calculate_all()
     print "-- calculate done! --"
 
+@manager.command
+def calculate_one():
+    studentid = 2016210870
+    calculate.calculate_test(studentid)
+    print "-- calculate done! --"
 
 if __name__ == "__main__":
     manager.run()
