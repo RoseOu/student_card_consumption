@@ -32,8 +32,7 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def add2014():
-    #student2014=range(2014210001, 2014214841)
-    student2014=range(2014213420, 2014214841)
+    student2014=range(2014210001, 2014214841)
     studentlist = [student2014]
     #create.create_students(studentlist)
     print "-- create_student done! --"
@@ -51,8 +50,7 @@ def add2015():
 
 @manager.command
 def add2016():
-    #student2016=range(2016210001, 2016214643)
-    student2016=range(2016210870, 2016210871)
+    student2016=range(2016210001, 2016214643)
     studentlist = [student2016]
     #create.create_students(studentlist)
     print "-- create_student done! --"
@@ -78,6 +76,42 @@ def calculate_one():
     studentid = 2016210870
     calculate.calculate_test(studentid)
     print "-- calculate done! --"
+
+@manager.command
+def calculate2014():
+    student2014=range(2014210001, 2014214841)
+    calculate.calculate_student_list(student2014)
+    print "-- calculate 2014! --"
+
+@manager.command
+def calculate2015():
+    student2015=range(2015210001, 2015214595)
+    calculate.calculate_student_list(student2015)
+    print "-- calculate 2015! --"
+
+@manager.command
+def calculate2016():
+    student2016=range(2016210001, 2016214643)
+    calculate.calculate_student_list(student2016)
+    print "-- calculate 2016! --"
+
+@manager.command
+def calculate2017():
+    student2017=range(2017210001, 2017214917)
+    calculate.calculate_student_list(student2017)
+    print "-- calculate 2017! --"
+
+@manager.command
+def delete_student_deal():
+    studentlist=range(2014210001, 2014214841)
+    for sid in studentlist:
+        if Student.query.filter_by(studentid=sid).first():
+            student = Student.query.filter_by(studentid=sid).first()
+            for d in student.deals:
+                db.session.delete(d)
+                db.session.commit()
+                print "delete" + str(sid)
+
 
 if __name__ == "__main__":
     manager.run()
